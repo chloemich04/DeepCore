@@ -70,7 +70,7 @@ data_struct_algor/
 ### Build Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/data_struct_algor.git
+   git clone https://github.com/yourusername/DeepCore.git
    cd data_struct_algor
    ```
 
