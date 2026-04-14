@@ -51,3 +51,49 @@ void test_insertion_sort() {
     
     //printf("Insertion sort test passed!\n");
 }
+
+void test_selection_sort() {
+        int arr[] = {64, 25, 12, 22, 11};
+        int n = sizeof(arr) / sizeof(arr[0]);
+    
+        printf("Original array: ");
+        for (int i = 0; i < n; i++)
+            printf(" %d ", arr[i]);
+        
+        printf("\n\n");
+    
+        selection_sort(arr, n);
+    
+        int expected[] = {11, 12, 22, 25, 64};
+        for (int i = 0; i < n; i++)
+            assert(arr[i] == expected[i]);
+    
+        printf("Sorted array: ");
+        for (int i = 0; i < n; i++)
+            printf(" %d ", arr[i]);
+    
+        printf("\n\n");
+}
+
+void test_quick_sort() {
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: ");
+    for (int i = 0; i < n; i++)
+        printf(" %d ", arr[i]);
+    
+    printf("\n\n");
+
+    quicksort(arr, 0, n - 1);
+
+    int expected[] = {1, 5, 7, 8, 9, 10};
+    for (int i = 0; i < n; i++)
+        assert(arr[i] == expected[i]);
+
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++)
+        printf(" %d ", arr[i]);
+
+    printf("\n\n");
+}

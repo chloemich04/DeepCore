@@ -6,6 +6,8 @@ int test_queue();
 int test_bst();
 int test_bubble_sort();
 int test_insertion_sort();
+int test_selection_sort();
+int test_quick_sort();
 
 int main() {
     printf("Running all tests...\n----------------\n");
@@ -27,6 +29,12 @@ int main() {
 
     test_insertion_sort();
     printf("\nInsertion sort test completed!\n----------------\n");
+
+    test_selection_sort();
+    printf("\nSelection sort test completed!\n----------------\n");
+
+    test_quick_sort();
+    printf("\nQuick sort test completed!\n----------------\n");
 
     printf("All tests completed!\n");
 
