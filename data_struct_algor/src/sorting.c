@@ -135,3 +135,13 @@ void merge(int arr[], int left, int mid, int right) {
 
 
 }
+
+void merge_sort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2; // get mid point
+
+        merge_sort(arr, left, mid); // sort the left half
+        merge_sort(arr, mid + 1, right); // sort the right half
+        merge(arr, left, mid, right); // merge the sorted halves
+    }
+}
