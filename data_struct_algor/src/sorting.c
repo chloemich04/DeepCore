@@ -11,6 +11,7 @@ void bubble_sort(int arr[], int n) {
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
+                print_array(arr, n);
             }
         }
     }
@@ -27,6 +28,7 @@ void insertion_sort(int arr[], int n) {
             j--;
         }
         arr[j + 1] = key;
+        print_array(arr, n);
     }
 }
 
@@ -44,6 +46,7 @@ void selection_sort(int arr[], int n) {
         arr[min_idx] = arr[i];
         arr[i] = temp;
 
+        print_array(arr, n);
     }
 }
 
@@ -74,10 +77,11 @@ int partition(int arr[], int low, int high) {
     int temp = arr[i + 1];
     arr[i + 1] = arr[high];
     arr[high] = temp;
+    print_array(arr, high + 1);
     return i + 1;
 }
 
-/* Merge Sort: O(n log n) - divides the array into halves, sorts them and then merges them back together */
+/* Merge function to merge two halves for Merge Sort */
 void merge(int arr[], int left, int mid, int right) {
     int left_size = mid - left + 1;     // size of left subarray
     int right_size = right - mid;       // size of right subarray
@@ -129,6 +133,8 @@ void merge(int arr[], int left, int mid, int right) {
         k++;
     }
 
+    print_array(arr, right + 1);
+
     // free the dynamically allocated memory for temporary arrays
     free(left_arr);
     free(right_arr);
@@ -136,6 +142,7 @@ void merge(int arr[], int left, int mid, int right) {
 
 }
 
+/* Merge Sort: O(n log n) - divides the array into halves, sorts them and then merges them back together */
 void merge_sort(int arr[], int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2; // get mid point
@@ -144,4 +151,10 @@ void merge_sort(int arr[], int left, int right) {
         merge_sort(arr, mid + 1, right); // sort the right half
         merge(arr, left, mid, right); // merge the sorted halves
     }
+}
+
+void print_array(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf(" %d ", arr[i]);
+    printf("\n");
 }
