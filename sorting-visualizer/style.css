@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f0f0f0;
+}
+
+#array-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 300px;
+  margin: 40px auto;
+  width: 80vw;
+  max-width: 900px;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+.bar {
+  margin: 0 2px;
+  background: #3498db;
+  width: 20px;
+  transition: height 0.2s, background 0.2s;
+}
+
+.bar.active {
+  background: #e74c3c;
+}
