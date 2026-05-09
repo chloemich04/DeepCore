@@ -20,5 +20,30 @@ function renderArray() {
     }
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function bubbleSort() {
+    const bars = document.getElementsByClassName('bar');
+    for (let i = 0; i < array.length - 1; i++) {
+        for (let j = 0; j < array.length - i - 1; j++) {
+            bars[j].classList.add('active');        
+            bars[j + 1].classList.add('active');
+            await sleep(100);
+
+            if (array[j] > array[j + 1]) {
+                [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                bars[j].style.height = array[j] + 'px';
+                bars[j + 1].style.height = array[j + 1] + 'px';
+            }
+
+            bars[j].classList.remove('active');
+            bars[j + 1].classList.remove('active');
+        }
+    }
+}
+
 generateArray();
 renderArray();
+document.getElementById('start-btn').addEventListener('click', bubbleSort);
