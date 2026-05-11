@@ -233,3 +233,8 @@ speedSlider.addEventListener('input', function() {
     animationSpeed = Number(this.value);
     speedValue.textContent = `${animationSpeed}ms`;
 });
+
+document.getElementById('randomize-btn').addEventListener('click', () => {
+    generateArray();
+    renderArray();
+});
