@@ -4,6 +4,7 @@ let isSorting = false;
 let isPaused = false;
 let shouldStop = false;
 let selectedAlgorithm = 'bubble';
+let animationSpeed = 100;
 
 function generateArray() {
     array = [];
@@ -38,13 +39,13 @@ async function bubbleSort() {
     for (let i = 0; i < array.length - 1; i++) {
         for (let j = 0; j < array.length - i - 1; j++) {
             while (isPaused) {
-                await sleep(100);
+                await sleep(animationSpeed);
                 if (shouldStop) break;
             }
             if (shouldStop) break;
             bars[j].classList.add('active');
             bars[j + 1].classList.add('active');
-            await sleep(100);
+            await sleep(animationSpeed);
             if (array[j] > array[j + 1]) {
                 [array[j], array[j + 1]] = [array[j + 1], array[j]];
                 bars[j].style.height = array[j] + 'px';
@@ -75,12 +76,12 @@ async function insertionSort() {
         bars[i].classList.add('active');
         while (j >= 0 && array[j] > key) {
             while (isPaused) {
-                await sleep(100);
+                await sleep(animationSpeed);
                 if (shouldStop) break;
             }
             if (shouldStop) break;
             bars[j].classList.add('active');
-            await sleep(100);
+            await sleep(animationSpeed);
             array[j + 1] = array[j];
             bars[j + 1].style.height = array[j] + 'px';
             bars[j].classList.remove('active');
@@ -110,12 +111,12 @@ async function selectionSort() {
         bars[i].classList.add('active');
         for (let j = i + 1; j < array.length; j++) {
             while (isPaused) {
-                await sleep(100);
+                await sleep(animationSpeed);
                 if (shouldStop) break;
             }
             if (shouldStop) break;
             bars[j].classList.add('active');
-            await sleep(100);
+            await sleep(animationSpeed);
             if (array[j] < array[minIdx]) minIdx = j;
             bars[j].classList.remove('active');
         }
@@ -224,4 +225,11 @@ document.querySelectorAll('.algo-btn').forEach(btn => {
         generateArray();
         renderArray();
     });
+});
+
+const speedSlider = document.getElementById('speed-slider');
+const speedValue = document.getElementById('speed-value');
+speedSlider.addEventListener('input', function() {
+    animationSpeed = Number(this.value);
+    speedValue.textContent = `${animationSpeed}ms`;
 });
