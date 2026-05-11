@@ -235,6 +235,10 @@ speedSlider.addEventListener('input', function() {
 });
 
 document.getElementById('randomize-btn').addEventListener('click', () => {
+    shouldStop = true;
+    isPaused = false;
+    isSorting = false;
+    document.getElementById('start-btn').textContent = 'Start Sort';
     generateArray();
     renderArray();
 });
