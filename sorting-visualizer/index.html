@@ -2,18 +2,25 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Sorting Visualizer</title>
+        <title>Deepcore</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Sorting Visualizer</h1>
-        <div id="main-content" style="display: flex; justify-content: center; align-items: flex-start;">
+        <h1>Deepcore</h1>
+        <div id="main-content">
             <div>
+                <div id="algo-buttons">
+                    <button data-algo="bubble" class="algo-btn selected">Bubble Sort</button>
+                    <button data-algo="insertion" class="algo-btn">Insertion Sort</button>
+                    <button data-algo="selection" class="algo-btn">Selection Sort</button>
+                </div>
+                <div id="controls">
+                    <button id="start-btn">Start Sort</button>
+                    <button id="reset-btn">Reset Array</button>
+                </div>
                 <div id="array-container"></div>
-                <button id="start-btn">Start Bubble Sort</button>
-                <button id="reset-btn">Reset Array </button>
             </div>
-            <pre id="code-block" style="margin-left: 40px; background: #222; color: #fff; padding: 20px; border-radius: 8px;  min-width: 350px; text-align: left;"></pre>
+            <pre id="code-block"></pre>
         </div>
         <script src="main.js"></script>
     </body>
