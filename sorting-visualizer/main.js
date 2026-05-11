@@ -1,14 +1,20 @@
-const ARRAY_SIZE = 30;
+let arraySize = 30;
 let array = [];
 let isSorting = false;
 let isPaused = false;
 let shouldStop = false;
 let selectedAlgorithm = 'bubble';
 let animationSpeed = 100;
+let comparisons = 0;
+let swaps = 0;
 
 function generateArray() {
     array = [];
-    for (let i = 0; i < ARRAY_SIZE; i++) {
+    comparisons = 0;
+    swaps = 0;
+    updateStatus();
+
+    for (let i = 0; i < arraySize; i++) {
         array.push(Math.floor(Math.random() * 200) + 20);
     }
 }
@@ -16,10 +22,13 @@ function generateArray() {
 function renderArray() {
     const container = document.getElementById('array-container');
     container.innerHTML = '';
+    const barWidth = Math.max(4, Math.floor(container.clientWidth / array.length) - 4);
+
     for (let i = 0; i < array.length; i++) {
         const bar = document.createElement('div');
         bar.classList.add('bar');
         bar.style.height = array[i] + 'px';
+        bar.style.width = `${barWidth}px`;
         container.appendChild(bar);
     }
 }
@@ -48,9 +57,13 @@ async function bubbleSort() {
             await sleep(animationSpeed);
             if (array[j] > array[j + 1]) {
                 [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                swaps++;
                 bars[j].style.height = array[j] + 'px';
                 bars[j + 1].style.height = array[j + 1] + 'px';
             }
+            comparisons++;
+            updateStatus();
+            
             bars[j].classList.remove('active');
             bars[j + 1].classList.remove('active');
         }
@@ -83,6 +96,7 @@ async function insertionSort() {
             bars[j].classList.add('active');
             await sleep(animationSpeed);
             array[j + 1] = array[j];
+            swaps++;
             bars[j + 1].style.height = array[j] + 'px';
             bars[j].classList.remove('active');
             j--;
@@ -90,6 +104,8 @@ async function insertionSort() {
         array[j + 1] = key;
         bars[j + 1].style.height = key + 'px';
         bars[i].classList.remove('active');
+        comparisons++;
+        updateStatus();
         if (shouldStop) break;
     }
     isSorting = false;
@@ -118,14 +134,17 @@ async function selectionSort() {
             bars[j].classList.add('active');
             await sleep(animationSpeed);
             if (array[j] < array[minIdx]) minIdx = j;
+            comparisons++;
             bars[j].classList.remove('active');
         }
         if (minIdx !== i) {
             [array[i], array[minIdx]] = [array[minIdx], array[i]];
+            swaps++;
             bars[i].style.height = array[i] + 'px';
             bars[minIdx].style.height = array[minIdx] + 'px';
         }
         bars[i].classList.remove('active');
+        updateStatus();
         if (shouldStop) break;
     }
     isSorting = false;
@@ -192,6 +211,16 @@ function updateAlgorithm() {
     document.getElementById('start-btn').textContent = 'Start Sort';
 }
 
+function updateStatus() {
+    document.getElementById('status-algo').textContent = algorithms[selectedAlgorithm].name;
+    document.getElementById('status-text').textContent = isSorting
+        ? isPaused ? 'Paused' : 'Sorting'
+        : 'Idle';
+    
+    document.getElementById('status-comparisons').textContent = comparisons;
+    document.getElementById('status-swaps').textContent = swaps;
+}
+
 generateArray();
 renderArray();
 updateAlgorithm();
@@ -239,6 +268,21 @@ document.getElementById('randomize-btn').addEventListener('click', () => {
     isPaused = false;
     isSorting = false;
     document.getElementById('start-btn').textContent = 'Start Sort';
+    generateArray();
+    renderArray();
+});
+
+const sizeSlider = document.getElementById('size-slider');
+const sizeValue = document.getElementById('size-value');
+sizeSlider.addEventListener('input', function() {
+    arraySize = Number(this.value);
+    sizeValue.textContent = arraySize;
+
+    shouldStop = true;
+    isPaused = false;
+    isSorting = false;
+    document.getElementById('start-btn').textContent = 'Start Sort';
+
     generateArray();
     renderArray();
 });
