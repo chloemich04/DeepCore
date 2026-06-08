@@ -8,7 +8,7 @@
     <body>
         <h1>Deepcore</h1>
         <div id="main-content">
-            <div>
+            <div class="left-column"></div>
                 <div id="algo-buttons">
                     <button data-algo="bubble" class="algo-btn selected">Bubble Sort</button>
                     <button data-algo="insertion" class="algo-btn">Insertion Sort</button>
@@ -18,7 +18,7 @@
                     <button id="start-btn">Start Sort</button>
                     <button id="reset-btn">Reset Array</button>
                 </div>
-                <div id="status-panel" style="margin-top: 16px; padding: 12px; background: #f4f4f4; border-radius: 8px; color: #333;">
+                <div id="status-panel" style="margin-top: 16px; padding: 12px; background: #ffffff; border-radius: 8px; color: #333;">
                     <div>Algorithm: <span id="status-algo">Bubble Sort</span></div>
                     <div>Status: <span id="status-text">Idle</span></div>
                     <div>Comparisons: <span id="status-comparisons">0</span></div>
@@ -39,7 +39,16 @@
                 </div>
                 <div id="array-container"></div>
             </div>
-            <pre id="code-block"></pre>
+            <div class="right-column"></div>
+                <div id="algo-info" style="margin-top: 16px; padding: 12px; background: #fff; border-radius: 10px; color:#333; max-width:900px;">
+                    <div id="status-description" style="margin-bottom:8px;">A short algorithm description goes here.</div>
+                    <div> Time: <span id="status-time">O(n^2)</span> &nbsp;|&nbsp; Space: <span id="status-space">O(1)</span></div>
+                </div>
+                <div id="code-panel">
+                    <div class="panel-title">Algorithm Code</div>
+                    <pre id="code-block"></pre>
+                </div>
+            </div>
         </div>
         <script src="main.js"></script>
     </body>

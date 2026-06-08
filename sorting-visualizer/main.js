@@ -22,9 +22,12 @@ function generateArray() {
 function renderArray() {
     const container = document.getElementById('array-container');
     container.innerHTML = '';
-    const barWidth = Math.max(4, Math.floor(container.clientWidth / array.length) - 4);
+    const paddingTotal = 12;
+    const gapPerBar = 4;
+    const effectiveWidth = Math.max(40, container.clientWidth - paddingTotal);
+    const barWidth = Math.max(2, Math.floor((effectiveWidth - (array.length * gapPerBar)) / array.length));
 
-    for (let i = 0; i < array.length; i++) {
+    for(let i = 0; i < array.length; i++) {
         const bar = document.createElement('div');
         bar.classList.add('bar');
         bar.style.height = array[i] + 'px';
@@ -156,59 +159,71 @@ async function selectionSort() {
 const algorithms = {
     bubble: {
         name: 'Bubble Sort',
+        description: 'A brute-algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.',
+        complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-async function bubbleSort() {
-    for (let i = 0; i < array.length - 1; i++) {
-        for (let j = 0; j < array.length - i - 1; j++) {
-            if (array[j] > array[j + 1]) {
-                [array[j], array[j + 1]] = [array[j + 1], array[j]];
+            async function bubbleSort() {
+                for (let i = 0; i < array.length - 1; i++) {
+                    for (let j = 0; j < array.length - i - 1; j++) {
+                        if (array[j] > array[j + 1]) {
+                            [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-`,
+        `,
         sort: bubbleSort
     },
     insertion: {
         name: 'Insertion Sort',
+        description: 'Builds the sorted array one item at a time by repeatedly taking the next item and inserting it into the correct position.',
+        complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-async function insertionSort() {
-    for (let i = 1; i < array.length; i++) {
-        let key = array[i];
-        let j = i - 1;
-        while (j >= 0 && array[j] > key) {
-            array[j + 1] = array[j];
-            j--;
-        }
-        array[j + 1] = key;
-    }
-}
-`,
+            async function insertionSort() {
+                for (let i = 1; i < array.length; i++) {
+                    let key = array[i];
+                    let j = i - 1;
+                    while (j >= 0 && array[j] > key) {
+                        array[j + 1] = array[j];
+                        j--;
+                    }
+                    array[j + 1] = key;
+                }
+            }
+        `,
         sort: insertionSort
     },
     selection: {
         name: 'Selection Sort',
+        description: 'Divides the input list into two parts: a sorted sublist and an unsorted sublist and repeatedly selects the smallest element from the unsorted sublist and moves it to the end of the sorted sublist.',
+        complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-async function selectionSort() {
-    for (let i = 0; i < array.length - 1; i++) {
-        let minIdx = i;
-        for (let j = i + 1; j < array.length; j++) {
-            if (array[j] < array[minIdx]) minIdx = j;
-        }
-        [array[i], array[minIdx]] = [array[minIdx], array[i]];
-    }
-}
-`,
+            async function selectionSort() {
+                for (let i = 0; i < array.length - 1; i++) {
+                    let minIdx = i;
+                    for (let j = i + 1; j < array.length; j++) {
+                        if (array[j] < array[minIdx]) minIdx = j;
+                    }
+                    [array[i], array[minIdx]] = [array[minIdx], array[i]];
+                }
+            }
+        `,
         sort: selectionSort
     }
 };
 
 function updateAlgorithm() {
-    document.getElementById('code-block').textContent = algorithms[selectedAlgorithm].code;
+    const algo = algorithms[selectedAlgorithm];
+    document.getElementById('code-block').textContent = algo.code;
+    document.getElementById('status-description').textContent = algo.description;
+    document.getElementById('status-time').textContent = algo.complexity.time;
+    document.getElementById('status-space').textContent = algo.complexity.space;
+
     document.querySelectorAll('.algo-btn').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.algo === selectedAlgorithm);
     });
-    document.getElementById('start-btn').textContent = 'Start Sort';
+    document.getElementById('start-btn').textContent = 'Start Sort'
+    updateStatus();
 }
 
 function updateStatus() {
