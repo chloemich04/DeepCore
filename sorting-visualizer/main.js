@@ -22,22 +22,45 @@ function generateArray() {
 function renderArray() {
     const container = document.getElementById('array-container');
     container.innerHTML = '';
-    const paddingTotal = 12;
-    const gapPerBar = 4;
-    const effectiveWidth = Math.max(40, container.clientWidth - paddingTotal);
-    const barWidth = Math.max(2, Math.floor((effectiveWidth - (array.length * gapPerBar)) / array.length));
 
-    for(let i = 0; i < array.length; i++) {
+    const containerWidth = container.clientWidth || 800;
+    const containerHeight = container.clientHeight || 300;
+    const gapPerBar = 2; // approximate left+right gap in px per bar
+
+    // compute ideal bar width to fit entire array; if too small, we'll keep min width and allow scroll
+    const idealBarWidth = Math.floor((containerWidth - (array.length * gapPerBar)) / array.length);
+    const minBarWidth = 2;
+    const barWidth = Math.max(minBarWidth, idealBarWidth);
+
+    // if bars won't fit, set a min-content width on the inner wrapper to trigger horizontal scroll
+    const requiredWidth = (barWidth + gapPerBar) * array.length;
+    container.style.minWidth = '0px'; // reset
+    if (requiredWidth > containerWidth) {
+        container.style.minWidth = requiredWidth + 'px';
+    }
+
+    const maxVal = array.length ? Math.max(...array) : 1;
+    const verticalPadding = 12;
+    for (let i = 0; i < array.length; i++) {
         const bar = document.createElement('div');
         bar.classList.add('bar');
-        bar.style.height = array[i] + 'px';
+
+        const height = Math.max(4, Math.round((array[i] / maxVal) * (containerHeight - verticalPadding)));
+        bar.style.height = height + 'px';
         bar.style.width = `${barWidth}px`;
         container.appendChild(bar);
     }
 }
-
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getBarHeightFromValue(value) {
+    const container = document.getElementById('array-container');
+    const containerHeight = container.clientHeight || 300;
+    const maxVal = array.length ? Math.max(...array) : 1;
+    const verticalPadding = 12;
+    return Math.max(4, Math.round((value / maxVal) * (containerHeight - verticalPadding)));
 }
 
 async function bubbleSort() {
@@ -71,6 +94,7 @@ async function bubbleSort() {
             bars[j + 1].classList.remove('active');
         }
         if (shouldStop) break;
+        bars[array.length - i - 1].classList.add('sorted');
     }
     isSorting = false;
     isPaused = false;
@@ -106,7 +130,7 @@ async function insertionSort() {
         }
         array[j + 1] = key;
         bars[j + 1].style.height = key + 'px';
-        bars[i].classList.remove('active');
+        bars[i].classList.add('sorted');
         comparisons++;
         updateStatus();
         if (shouldStop) break;
@@ -146,7 +170,7 @@ async function selectionSort() {
             bars[i].style.height = array[i] + 'px';
             bars[minIdx].style.height = array[minIdx] + 'px';
         }
-        bars[i].classList.remove('active');
+        bars[i].classList.add('sorted');
         updateStatus();
         if (shouldStop) break;
     }
@@ -156,59 +180,179 @@ async function selectionSort() {
     startBtn.textContent = 'Start Sort';
 }
 
+async function partition(low, high) {
+    const bars = document.getElementsByClassName('bar');
+    const pivotVal = array[high];
+    let i = low - 1;
+
+    bars[high].classList.add('active'); // mark pivot
+    for (let j = low; j <= high - 1; j++) {
+        while (isPaused) {
+            await sleep(animationSpeed);
+            if (shouldStop) break;
+        }
+        if (shouldStop) break;
+
+        bars[j].classList.add('active');
+        await sleep(animationSpeed);
+
+        comparisons++;
+        if (array[j] < pivotVal) {
+            i++;
+            [array[i], array[j]] = [array[j], array[i]];
+            swaps++;
+
+            bars[i].style.height = getBarHeightFromValue(array[i]) + 'px';
+            bars[j].style.height = getBarHeightFromValue(array[j]) + 'px';
+        }
+
+        updateStatus();
+        bars[j].classList.remove('active');
+    }
+
+    // put pivot into correct place
+    [array[i + 1], array[high]] = [array[high], array[i + 1]];
+    swaps++;
+    bars[i + 1].style.height = getBarHeightFromValue(array[i + 1]) + 'px';
+    bars[high].style.height = getBarHeightFromValue(array[high]) + 'px';
+    bars[high].classList.remove('active');
+
+    return i + 1;
+}
+
+async function quickSort(low, high) {
+    if (low < high) {
+        while (isPaused) {
+            await sleep(animationSpeed);
+            if (shouldStop) return;
+        }
+        if (shouldStop) return;
+
+        const pi = await partition(low, high);
+        const bars = document.getElementsByClassName('bar');
+        // optional visual cue: mark pivot position as sorted
+        if (pi >= 0 && pi < bars.length) bars[pi].classList.add('sorted');
+
+        await quickSort(low, pi - 1);
+        if (shouldStop) return;
+        await quickSort(pi + 1, high);
+    }
+}
+
+async function quickSortStart() {
+    isSorting = true;
+    isPaused = false;
+    shouldStop = false;
+    const startBtn = document.getElementById('start-btn');
+    startBtn.textContent = 'Stop Sort';
+    startBtn.disabled = false;
+
+    await quickSort(0, array.length - 1);
+
+    if (!shouldStop) {
+        const bars = document.getElementsByClassName('bar');
+        for (let i = 0; i < bars.length; i++) bars[i].classList.add('sorted');
+    }
+
+    isSorting = false;
+    isPaused = false;
+    shouldStop = false;
+    startBtn.textContent = 'Start Sort';
+}
+
 const algorithms = {
+
     bubble: {
         name: 'Bubble Sort',
         description: 'A brute-algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.',
         complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-            async function bubbleSort() {
-                for (let i = 0; i < array.length - 1; i++) {
-                    for (let j = 0; j < array.length - i - 1; j++) {
-                        if (array[j] > array[j + 1]) {
-                            [array[j], array[j + 1]] = [array[j + 1], array[j]];
-                        }
-                    }
-                }
+async function bubbleSort() {
+    for (let i = 0; i < array.length - 1; i++) {
+        for (let j = 0; j < array.length - i - 1; j++) {
+            if (array[j] > array[j + 1]) {
+                [array[j], array[j + 1]] = [array[j + 1], array[j]];
             }
+        }
+    }
+}
         `,
         sort: bubbleSort
     },
+
     insertion: {
         name: 'Insertion Sort',
         description: 'Builds the sorted array one item at a time by repeatedly taking the next item and inserting it into the correct position.',
         complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-            async function insertionSort() {
-                for (let i = 1; i < array.length; i++) {
-                    let key = array[i];
-                    let j = i - 1;
-                    while (j >= 0 && array[j] > key) {
-                        array[j + 1] = array[j];
-                        j--;
-                    }
-                    array[j + 1] = key;
-                }
-            }
+async function insertionSort() {
+    for (let i = 1; i < array.length; i++) {
+        let key = array[i];
+        let j = i - 1;
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j--;
+        }
+        array[j + 1] = key;
+    }
+}
         `,
         sort: insertionSort
     },
+
     selection: {
         name: 'Selection Sort',
         description: 'Divides the input list into two parts: a sorted sublist and an unsorted sublist and repeatedly selects the smallest element from the unsorted sublist and moves it to the end of the sorted sublist.',
         complexity: {time: 'O(n^2)', space: 'O(1)'},
         code: `
-            async function selectionSort() {
-                for (let i = 0; i < array.length - 1; i++) {
-                    let minIdx = i;
-                    for (let j = i + 1; j < array.length; j++) {
-                        if (array[j] < array[minIdx]) minIdx = j;
-                    }
-                    [array[i], array[minIdx]] = [array[minIdx], array[i]];
-                }
-            }
+async function selectionSort() {
+    for (let i = 0; i < array.length - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < array.length; j++) {
+            if (array[j] < array[minIdx]) minIdx = j;
+        }
+        [array[i], array[minIdx]] = [array[minIdx], array[i]];
+    }
+}
         `,
         sort: selectionSort
+    },
+
+    quicksort: {
+        name: "Quicksort",
+        description: "An efficient divide-and-conquer algorithm that selects a 'pivot' element and partitions the array into two sub-arrays according to whether elements are less than or greater than the pivot, then recursively sorts the sub-arrays.",
+        complexity: { time: 'O(n log n)', space: 'O(log n)' },
+        code: `
+        async function partition(low, high) {
+            const pivotVal = array[high];
+            let i = low - 1;
+
+            for(let j = low; j<= high - 1; j++) {
+                if (array[j] < pivotVal) {
+                    i++;
+                    [array[i], array[j]] = [array[j], array[i]];
+                    swaps++;
+
+                    bars[i].style.height = getBarHeightFromValue(array[i]) + 'px';
+                    bars[j].style.height = getBarHeightFromValue(array[j]) + 'px';
+                }
+            }
+
+            [array[i + 1], array[high]] = [array[high], array[i + 1]];
+            
+            return i + 1;
+        }
+
+        async function quickSort(low, high) {
+            if (low < high) {
+                const pi = await partition(low, high);
+
+                await quickSort(low, pi - 1);
+                await quickSort(pi + 1, high);
+            }
+        }
+        `,
+        sort: quickSortStart
     }
 };
 

@@ -7,49 +7,61 @@
     </head>
     <body>
         <h1>Deepcore</h1>
+
+        <div id="algo-buttons" class="top-algo-bar">
+            <button data-algo="bubble" class="algo-btn selected">Bubble Sort</button>
+            <button data-algo="insertion" class="algo-btn">Insertion Sort</button>
+            <button data-algo="selection" class="algo-btn">Selection Sort</button>
+            <button data-algo="quicksort" class="algo-btn">Quicksort</button>
+        </div>
+
         <div id="main-content">
-            <div class="left-column"></div>
-                <div id="algo-buttons">
-                    <button data-algo="bubble" class="algo-btn selected">Bubble Sort</button>
-                    <button data-algo="insertion" class="algo-btn">Insertion Sort</button>
-                    <button data-algo="selection" class="algo-btn">Selection Sort</button>
+            <div class="left-column">
+                <div id="algo-info">
+                    <div id="status-description">A short algorithm description goes here.</div>
+                    <div> Time: <span id="status-time"> O(n^2)</span> &nbsp;|&nbsp; Space: <span id="status-space">O(1)</span></div>
                 </div>
-                <div id="controls">
-                    <button id="start-btn">Start Sort</button>
-                    <button id="reset-btn">Reset Array</button>
-                </div>
-                <div id="status-panel" style="margin-top: 16px; padding: 12px; background: #ffffff; border-radius: 8px; color: #333;">
-                    <div>Algorithm: <span id="status-algo">Bubble Sort</span></div>
-                    <div>Status: <span id="status-text">Idle</span></div>
-                    <div>Comparisons: <span id="status-comparisons">0</span></div>
-                    <div>Swaps: <span id="status-swaps">0</span></div>
-                </div>
-                <div id="speed-control" style="margin-top: 10px;">
-                    <label for="speed-slider">Speed:</label>
-                    <input type="range" id="speed-slider" min="10" max="1000" value="100" step="10">
-                    <span id="speed-value">100ms</span>
-                </div>
-                <div id="size-control" style="margin-top: 10px;">
-                    <label for="size-slider">Array Size:</label>
-                    <input type="range" id="size-slider" min="10" max="80" value="30" step="1">
-                    <span id="size-value">30</span>
-                </div>
-                <div id="randomize-control" style="margin-top: 10px;">
-                    <button id="randomize-btn" style="padding: 8px 16px; border: none; border-radius: 4px; background: #9b59b6; color: #fff; cursor: pointer;">Randomize Array</button>
-                </div>
+
                 <div id="array-container"></div>
             </div>
-            <div class="right-column"></div>
-                <div id="algo-info" style="margin-top: 16px; padding: 12px; background: #fff; border-radius: 10px; color:#333; max-width:900px;">
-                    <div id="status-description" style="margin-bottom:8px;">A short algorithm description goes here.</div>
-                    <div> Time: <span id="status-time">O(n^2)</span> &nbsp;|&nbsp; Space: <span id="status-space">O(1)</span></div>
+            <aside class="right-column">
+                <div id="controls-panel">
+                    <div id="controls">
+                        <button id="start-btn">Start Sort</button>
+                        <button id="reset-btn">Reset Array</button>
+                        <div id="randomize-control">
+                            <button id="randomize-btn">Randomize Array</button>
+                        </div>
+                    </div>
+                
+                    <div id="status-panel">
+                        <div>Algorithm: <span id="status-algo">Bubble Sort</span></div>
+                        <div>Status: <span id="status-text">Idle</span></div>
+                        <div>Comparisons: <span id="status-comparisons">0</span></div>
+                        <div>Swaps: <span id="status-swaps">0</span></div>
+                    </div>
+                    
+                    <div id="speed-control">
+                        <label for="speed-slider">Speed:</label>
+                        <input type="range" id="speed-slider" min="10" max="1000" value="100" step="10">
+                        <span id="speed-value">100ms</span>
+                    </div>
+
+                    <div id="size-control">
+                        <label for="size-slider">Array Size:</label>
+                        <input type="range" id="size-slider" min="10" max="80" value="30" step="1">
+                        <span id="size-value">30</span>
+                    </div>
+                    
                 </div>
+
                 <div id="code-panel">
                     <div class="panel-title">Algorithm Code</div>
                     <pre id="code-block"></pre>
                 </div>
-            </div>
+            </aside>
         </div>
+
         <script src="main.js"></script>
     </body>
 </html>
